@@ -153,20 +153,20 @@ void free_courses_all(course** courses){
     free(courses);
 }
 
-int main(){
-    int total, i;
-    course** courses = readfile("course_evals.txt", &total);
-    printf("total %d\n", total);
-    char** res = tostring(courses,total);
-    for(i=0;i<total;i++){
-        //printf("%s-%d-%s, %s, %d, %.2f, %.2f, %.2f, %d\n", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality, i);
-        printf("%s, %d\n", res[i], i);
-    }
-    course* minR = min_four(1, courses, total);
-    printf("\nMinR: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", minR->major, minR->c_num, minR->c_subnum, minR->instructor, minR->enroll, minR->c_quality, minR->c_difficulty, minR->i_quality);
-    course* maxD = max_four(3, courses, total);
-    printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);
-    free_char(res);
-    free_courses_all(courses);
-    return 0;
-}
+// int main(){
+//     int total, i;
+//     course** courses = readfile("course_evals.txt", &total);
+//     printf("total %d\n", total);
+//     char** res = tostring(courses,total);
+//     for(i=0;i<total;i++){
+//         //printf("%s-%d-%s, %s, %d, %.2f, %.2f, %.2f, %d\n", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality, i);
+//         printf("%s, %d\n", res[i], i);
+//     }
+//     course* minR = min_four(1, courses, total);
+//     printf("\nMinR: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", minR->major, minR->c_num, minR->c_subnum, minR->instructor, minR->enroll, minR->c_quality, minR->c_difficulty, minR->i_quality);
+//     course* maxD = max_four(3, courses, total);
+//     printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);
+//     free_char(res);
+//     free_courses_all(courses);
+//     return 0;
+// }

@@ -14,8 +14,9 @@ http://www.binarii.com/files/papers/c_sockets.txt
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-
-int start_server(int PORT_NUMBER)
+// #include "backdata.h"
+#include "backdata.c"
+int start_server(int PORT_NUMBER, char* file_name)
 {
 
       // structs to represent the server and client
@@ -25,13 +26,13 @@ int start_server(int PORT_NUMBER)
 
       // 1. socket: creates a socket descriptor that you later use to make other system calls
       if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-	perror("Socket");
-	exit(1);
+      	perror("Socket");
+      	exit(1);
       }
       int temp;
       if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&temp,sizeof(int)) == -1) {
-	perror("Setsockopt");
-	exit(1);
+        perror("Setsockopt");
+        exit(1);
       }
 
       // configure the server
@@ -42,54 +43,71 @@ int start_server(int PORT_NUMBER)
       
       // 2. bind: use the socket and associate it with the port number
       if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) {
-	perror("Unable to bind");
-	exit(1);
+        perror("Unable to bind");
+        exit(1);
       }
 
       // 3. listen: indicates that we want to listen to the port to which we bound; second arg is number of allowed connections
       if (listen(sock, 1) == -1) {
-	perror("Listen");
-	exit(1);
+        perror("Listen");
+        exit(1);
       }
           
       // once you get here, the server is set up and about to start listening
       printf("\nServer configured to listen on port %d\n", PORT_NUMBER);
       fflush(stdout);
-     
 
+      //Read file here - haoran
+      int total, i;
+      course** courses = readfile(file_name, &total);
+      char** res = tostring(courses,total);
+      // char* newest = res[0];
+      // printf("%s", newest);
       // 4. accept: wait here until we get a connection on that port
       int sin_size = sizeof(struct sockaddr_in);
       int fd = accept(sock, (struct sockaddr *)&client_addr,(socklen_t *)&sin_size);
       if (fd != -1) {
-	printf("Server got a connection from (%s, %d)\n", inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
-      
-	// buffer to read data into
-	char request[1024];
-	
-	// 5. recv: read incoming message (request) into buffer
-	int bytes_received = recv(fd,request,1024,0);
-	// null-terminate the string
-	request[bytes_received] = '\0';
-	// print it to standard out
-	printf("This is the incoming request:\n%s\n", request);
+      	printf("Server got a connection from (%s, %d)\n", inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
+            
+      	// buffer to read data into
+      	char request[1024];
+      	//loop start here-Haoran
+        while(1){
+        	// 5. recv: read incoming message (request) into buffer
+        	int bytes_received = recv(fd,request,1024,0);
+        	// null-terminate the string
+        	request[bytes_received] = '\0';
+        	// print it to standard out
+        	printf("This is the incoming request:\n%s\n", request);
 
-	// this is the message that we'll send back
-	char *reply = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>Hello world!<p>This text is <b>bold</b>.</html>";
-
-	// 6. send: send the outgoing message (response) over the socket
-	// note that the second argument is a char*, and the third is the number of chars	
-	send(fd, reply, strlen(reply), 0);
-	
-	// 7. close: close the connection
-	close(fd);
-	printf("Server closed connection\n");
+        	// this is the message that we'll send back
+          // use for loop to display all the strings in the file-haoran
+          char* reply = malloc(sizeof(char) * 100 * total);
+          strcat(reply, "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>");
+          for(i=0;i<total;i++){
+            char* newest = res[i];
+            strcat(reply, "<p>");
+            strcat(reply, newest);
+            // printf("%s", reply);
+            // 6. send: send the outgoing message (response) over the socket
+            // note that the second argument is a char*, and the third is the number of chars 
+          }
+          char* reply_after = "</html>\n";
+          strcat(reply, reply_after);
+          send(fd, reply, strlen(reply), 0);
+          free(reply);
+        }
+      	
+      	// 7. close: close the connection
+      	close(fd);
+      	printf("Server closed connection\n");
       }
 
-      // 8. close: close the socket
-      close(sock);
-      printf("Server shutting down\n");
-  
-      return 0;
+  // 8. close: close the socket
+  close(sock);
+  printf("Server shutting down\n");
+
+  return 0;
 } 
 
 
@@ -97,7 +115,7 @@ int start_server(int PORT_NUMBER)
 int main(int argc, char *argv[])
 {
   // check the number of arguments
-  if (argc != 2) {
+  if (argc != 3) {
       printf("\nUsage: %s [port_number]\n", argv[0]);
       exit(-1);
   }
@@ -107,7 +125,14 @@ int main(int argc, char *argv[])
     printf("\nPlease specify a port number greater than 1024\n");
     exit(-1);
   }
-
-  start_server(port_number);
+  char* file_name = argv[2];
+  printf("File name is %s", file_name);
+  // course** courses = readfile(file_name, &total);
+  // char** res = tostring(courses,total);
+  // for(i=0;i<total;i++){
+  //     //printf("%s-%d-%s, %s, %d, %.2f, %.2f, %.2f, %d\n", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality, i);
+  //     printf("%s, %d\n", res[i], i);
+  // }
+  start_server(port_number, file_name);
 }
 

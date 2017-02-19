@@ -3,15 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-course** readfile(char* filename, int* total){
+course** readfile(char* filename, int* total){ // filename passed by argv[1], total will be counted after courses list is made and will not change, what will change is num in following functions
     FILE* c_evals = fopen(filename,"rw");
     if(!c_evals){perror("Error opening file"); exit(-1);}
     printf("File opened!\n");
-    course** courses = (course**)malloc(sizeof(course*)*700);
+    course** courses = (course**)malloc(sizeof(course*)*666);
     if(!courses){perror("Error malloc space"); exit(-1);}
     int i;
-    for(i=0; i<700; i++){courses[i] = NULL;}
+    for(i=0; i<666; i++){courses[i] = NULL;}
     *total = 0;
     char name;
     while(!feof(c_evals)){
@@ -42,21 +43,205 @@ course** readfile(char* filename, int* total){
     return courses;
 }
 
+char *strupr(char *str) { // private function for case insensitive
+    char *ptr = str;
+    while (*ptr != '\0') {
+        if (islower(*ptr))
+        *ptr = toupper(*ptr);
+        ptr++;
+    }
+    return str;
+}
 
-/*
-course** find_course(char* major, int c_num, int* num);
-course** find_instructor(char* instructor, int* num);
+course** find_course(char* major, int c_num, course** courses, int* num){ // "*" for major to find all majors, 0 for c_num to find all course numbers, can also be part of them from the start
+    course** found = (course**)malloc(sizeof(course*)*666);
+    if(!found){perror("Error malloc space"); exit(-1);}
+    int i, tot = *num, range=0;
+    for(i=0; i<666; i++){found[i] = NULL;}
+    if((strlen(major)!=0 && major[0]!='*') && c_num==0) {range = 1; strupr(major);}
+    else if((strlen(major)==0 || major[0]=='*') && c_num!=0) range = 2;
+    else if((strlen(major)!=0 && major[0]!='*') && c_num!=0) {range = 3; strupr(major);}
+    *num = 0;
+    for(i=0; i<tot; i++){
+        if(range==1){
+            if(strncmp(major, courses[i]->major, strlen(major)) == 0){
+                found[*num] = courses[i];
+                (*num)++;
+            }
+        }
+        else if(range==2){
+            if((c_num==(courses[i]->c_num/100)) || (c_num==(courses[i]->c_num/10)) || (c_num==(courses[i]->c_num))){
+                found[*num] = courses[i];
+                (*num)++;
+            }
+        }
+        else if(range==3){
+            if(((c_num==(courses[i]->c_num/100)) || (c_num==(courses[i]->c_num/10)) || (c_num==(courses[i]->c_num))) && strncmp(major, courses[i]->major, strlen(major))==0){
+                found[*num] = courses[i];
+                (*num)++;
+            }
+        }
 
-course** filter_enroll(int k, course** cources, int* num);
-course** filter_three(int kind, float k, course** cources, int* num);
+    }
+    return found;
+}
 
-void sort_enroll(int dir, course** cources, int num);
-void sort_three(int dir, int kind, course** cources, int num);
+course** find_instructor(char* instructor, course** courses, int* num){ // can be part of the instructor's name from the start
+    course** found = (course**)malloc(sizeof(course*)*666);
+    if(!found){perror("Error malloc space"); exit(-1);}
+    int i, tot = *num;
+    for(i=0; i<666; i++){found[i] = NULL;}
+    *num = 0; strupr(instructor);
+    for(i=0; i<tot;i++){
+        if(strncmp(instructor, courses[i]->instructor, strlen(instructor)) == 0){
+            found[*num] = courses[i];
+            (*num)++;
+        }
+    }
+    return found;
+}
 
-int avg_enroll(course** sourses, int num);
-float avg_three(int kind, course** courses, int num);*/
+course** filter_enroll(int dir, int k, course** courses, int* num){ // dir: 1 for larger, 2 for smaller, k for standard
+    course** filtered = (course**)malloc(sizeof(course*)*666);
+    if(!filtered){perror("Error malloc space"); exit(-1);}
+    int i, tot = *num;
+    for(i=0; i<666; i++){filtered[i] = NULL;}
+    *num = 0;
+    for(i=0; i<tot; i++){
+        if(dir==1){
+            if(courses[i]->enroll >= k){
+                filtered[*num] = courses[i];
+                (*num)++;
+            }
+        }
+        else if(dir==2){
+            if(courses[i]->enroll <= k){
+                filtered[*num] = courses[i];
+                (*num)++;
+            }
+        }
+    }
+    return filtered;
+}
 
-course* max_four(int kind, course** courses, int num){
+course** filter_three(int dir, int kind, float k, course** courses, int* num){ // dir: 1 for larger, 2 for smaller, k for standard, kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
+    course** filtered = (course**)malloc(sizeof(course*)*666);
+    if(!filtered){perror("Error malloc space"); exit(-1);}
+    int i, tot = *num;
+    for(i=0; i<666; i++){filtered[i] = NULL;}
+    *num = 0;
+    for(i=0; i<tot; i++){
+        if(kind==2){
+            if(dir==1){
+                if(courses[i]->c_quality >= k-0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+            else if(dir==2){
+                if(courses[i]->c_quality <= k+0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+        }
+        else if(kind==3){
+             if(dir==1){
+                if(courses[i]->c_difficulty >= k-0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+            else if(dir==2){
+                if(courses[i]->c_difficulty <= k+0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+        }
+        else if(kind==4){
+             if(dir==1){
+                if(courses[i]->i_quality >= k-0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+            else if(dir==2){
+                if(courses[i]->i_quality <= k+0.0001){
+                    filtered[*num] = courses[i];
+                    (*num)++;
+                }
+            }
+        }
+    }
+    return filtered;
+}
+
+int cmpERA(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*aa)->enroll - (*bb)->enroll;} // private compare functions for qsort
+int cmpERD(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*bb)->enroll - (*aa)->enroll;}
+int cmpCQA(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*aa)->c_quality > (*bb)->c_quality ? 1:-1;}
+int cmpCQD(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*bb)->c_quality > (*aa)->c_quality ? 1:-1;}
+int cmpCDA(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*aa)->c_difficulty > (*bb)->c_difficulty ? 1:-1;}
+int cmpCDD(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*bb)->c_difficulty > (*aa)->c_difficulty ? 1:-1;}
+int cmpIQA(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*aa)->i_quality > (*bb)->i_quality ? 1:-1;}
+int cmpIQD(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*bb)->i_quality > (*aa)->i_quality ? 1:-1;}
+
+course** sort_enroll(int dir, course** courses, int num){ // dir: 1 for ascend, 2 for descend
+    course** sorted = (course**)malloc(sizeof(course*)*666);
+    if(!sorted){perror("Error malloc space"); exit(-1);}
+    int i;
+    for(i=0; i<666; i++){sorted[i] = courses[i];}
+    if(dir==1) qsort(sorted, num, sizeof(sorted[0]), cmpERA);
+    else if(dir==2) qsort(sorted, num, sizeof(sorted[0]), cmpERD);
+    return sorted;
+}
+
+course** sort_three(int dir, int kind, course** courses, int num){ // dir: 1 for ascend, 2 for descend, kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
+    course** sorted = (course**)malloc(sizeof(course*)*666);
+    if(!sorted){perror("Error malloc space"); exit(-1);}
+    int i;
+    for(i=0; i<666; i++){sorted[i] = courses[i];}
+    if(kind==2){
+        if(dir==1) qsort(sorted, num, sizeof(sorted[0]), cmpCQA);
+        else if(dir==2) qsort(sorted, num, sizeof(sorted[0]), cmpCQD);
+    }
+    else if(kind==3){
+        if(dir==1) qsort(sorted, num, sizeof(sorted[0]), cmpCDA);
+        else if(dir==2) qsort(sorted, num, sizeof(sorted[0]), cmpCDD);
+    }
+    else if(kind==4){
+        if(dir==1) qsort(sorted, num, sizeof(sorted[0]), cmpIQA);
+        else if(dir==2) qsort(sorted, num, sizeof(sorted[0]), cmpIQD);
+    }
+    return sorted;
+}
+
+int avg_enroll(course** courses, int num){
+    int tot = 0, i;
+    for(i=0; i<num; i++){
+        tot += courses[i]->enroll;
+    }
+    return tot/num;
+}
+
+float avg_three(int kind, course** courses, int num){ // kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
+    float totf = 0.0;
+    int i;
+    for(i=0; i<num; i++){
+        if(kind==2){
+            totf += courses[i]->c_quality;
+        }
+        else if(kind==3){
+            totf += courses[i]->c_difficulty;
+        }
+        else if(kind==4){
+            totf += courses[i]->i_quality;
+        }
+    }
+    return totf/num;
+}
+
+course* max_four(int kind, course** courses, int num){ // kind: 1 for enroll, 2 for c_quality, 3 for c_difficulty, 4 for i_quality
     course* res;
     int i, max=0;
     float maxf=0.0;
@@ -89,7 +274,7 @@ course* max_four(int kind, course** courses, int num){
     return res;
 }
 
-course* min_four(int kind, course** courses, int num){
+course* min_four(int kind, course** courses, int num){ // kind: 1 for enroll, 2 for c_quality, 3 for c_difficulty, 4 for i_quality
     course* res;
     int i, min=1000;
     float minf=1000.0;
@@ -152,21 +337,3 @@ void free_courses_all(course** courses){
     }
     free(courses);
 }
-
-// int main(){
-//     int total, i;
-//     course** courses = readfile("course_evals.txt", &total);
-//     printf("total %d\n", total);
-//     char** res = tostring(courses,total);
-//     for(i=0;i<total;i++){
-//         //printf("%s-%d-%s, %s, %d, %.2f, %.2f, %.2f, %d\n", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality, i);
-//         printf("%s, %d\n", res[i], i);
-//     }
-//     course* minR = min_four(1, courses, total);
-//     printf("\nMinR: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", minR->major, minR->c_num, minR->c_subnum, minR->instructor, minR->enroll, minR->c_quality, minR->c_difficulty, minR->i_quality);
-//     course* maxD = max_four(3, courses, total);
-//     printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);
-//     free_char(res);
-//     free_courses_all(courses);
-//     return 0;
-// }

@@ -1,3 +1,5 @@
+/* a head file with functions implemented for basic data process - gongyao */
+
 typedef struct Course{
     char major[5];
     int c_num;
@@ -11,16 +13,16 @@ typedef struct Course{
 
 course** readfile(char* filename, int* total); // reads a course_evals file and return the course information with a structure list and total number
 
-course** find_course(char* major, int c_num, int* num); // find courses with major or course number, return the list of courses and total number
-course** find_instructor(char* instructor, int* num); // find courses with instructor, return the list of courses and total number
+course** find_course(char* major, int c_num, course** courses, int* num); // find courses with major or course number, return the list of courses and total number
+course** find_instructor(char* instructor, course** courses, int* num); // find courses with instructor, return the list of courses and total number
 
-course** filter_enroll(int k, course** cources, int* num); // filter courses with enroll number, return the list of courses and total number
-course** filter_three(int kind, float k, course** cources, int* num);// filter courses with one of three course scores, return the list of courses and total number
+course** filter_enroll(int dir, int k, course** courses, int* num); // filter courses with enroll number, return the list of courses and total number
+course** filter_three(int dir, int kind, float k, course** courses, int* num);// filter courses with one of three course scores, return the list of courses and total number
 
-void sort_enroll(int dir, course** cources, int num); // sort courses with enroll number, return the list of sorted courses
-void sort_three(int dir, int kind, course** cources, int num); // sort courses with one of three course scores, return the list of sorted courses
+course** sort_enroll(int dir, course** courses, int num); // sort courses with enroll number, return the list of sorted courses
+course** sort_three(int dir, int kind, course** courses, int num); // sort courses with one of three course scores, return the list of sorted courses
 
-int avg_enroll(course** sourses, int num); // calculate average enroll numbers, return the result by int
+int avg_enroll(course** courses, int num); // calculate average enroll numbers, return the result by int
 float avg_three(int kind, course** courses, int num); // calculate one of three average course scores, return the result by float
 
 course* max_four(int kind, course** courses, int num); // find the maximum of one of four course info, return the max course

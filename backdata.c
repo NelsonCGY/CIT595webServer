@@ -54,7 +54,7 @@ char *strupr(char *str) { // private function for case insensitive
 }
 
 course** find_course(char* major, int c_num, course** courses, int* num){ // "*" for major to find all majors, 0 for c_num to find all course numbers, can also be part of them from the start
-    course** found = (course**)malloc(sizeof(course*)*666);
+    course** found = (course**)malloc(sizeof(course*)*((*num)+1));
     if(!found){perror("Error malloc space"); exit(-1);}
     int i, tot = *num, range=0;
     for(i=0; i<666; i++){found[i] = NULL;}
@@ -87,7 +87,7 @@ course** find_course(char* major, int c_num, course** courses, int* num){ // "*"
 }
 
 course** find_instructor(char* instructor, course** courses, int* num){ // can be part of the instructor's name from the start
-    course** found = (course**)malloc(sizeof(course*)*666);
+    course** found = (course**)malloc(sizeof(course*)*((*num)+1));
     if(!found){perror("Error malloc space"); exit(-1);}
     int i, tot = *num;
     for(i=0; i<666; i++){found[i] = NULL;}
@@ -102,7 +102,7 @@ course** find_instructor(char* instructor, course** courses, int* num){ // can b
 }
 
 course** filter_enroll(int dir, int k, course** courses, int* num){ // dir: 1 for larger, 2 for smaller, k for standard
-    course** filtered = (course**)malloc(sizeof(course*)*666);
+    course** filtered = (course**)malloc(sizeof(course*)*((*num)+1));
     if(!filtered){perror("Error malloc space"); exit(-1);}
     int i, tot = *num;
     for(i=0; i<666; i++){filtered[i] = NULL;}
@@ -125,7 +125,7 @@ course** filter_enroll(int dir, int k, course** courses, int* num){ // dir: 1 fo
 }
 
 course** filter_three(int dir, int kind, float k, course** courses, int* num){ // dir: 1 for larger, 2 for smaller, k for standard, kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
-    course** filtered = (course**)malloc(sizeof(course*)*666);
+    course** filtered = (course**)malloc(sizeof(course*)*((*num)+1));
     if(!filtered){perror("Error malloc space"); exit(-1);}
     int i, tot = *num;
     for(i=0; i<666; i++){filtered[i] = NULL;}
@@ -187,7 +187,7 @@ int cmpIQA(const void* a, const void* b){course** aa = (course**)a; course** bb 
 int cmpIQD(const void* a, const void* b){course** aa = (course**)a; course** bb = (course**)b; return (*bb)->i_quality > (*aa)->i_quality ? 1:-1;}
 
 course** sort_enroll(int dir, course** courses, int num){ // dir: 1 for ascend, 2 for descend
-    course** sorted = (course**)malloc(sizeof(course*)*666);
+    course** sorted = (course**)malloc(sizeof(course*)*(num+1));
     if(!sorted){perror("Error malloc space"); exit(-1);}
     int i;
     for(i=0; i<666; i++){sorted[i] = courses[i];}
@@ -197,7 +197,7 @@ course** sort_enroll(int dir, course** courses, int num){ // dir: 1 for ascend, 
 }
 
 course** sort_three(int dir, int kind, course** courses, int num){ // dir: 1 for ascend, 2 for descend, kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
-    course** sorted = (course**)malloc(sizeof(course*)*666);
+    course** sorted = (course**)malloc(sizeof(course*)*(num+1));
     if(!sorted){perror("Error malloc space"); exit(-1);}
     int i;
     for(i=0; i<666; i++){sorted[i] = courses[i];}

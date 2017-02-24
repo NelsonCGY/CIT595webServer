@@ -16,9 +16,44 @@ http://www.binarii.com/files/papers/c_sockets.txt
 #include <string.h>
 // #include "backdata.h"
 #include "backdata.c"
+pthread_mutex_t lock;
+typedef struct Thread_input{
+  int index;
+  char* function;
+} thread_input;
+void* sent_response(void* p){
+  thread_input* input = (thread_input) p;
+  int i;
+  if(strcmp(input, "test.html")){
+    int total;
+    course** courses = readfile(file_name, &total);
+    char** res = tostring(courses,total);
+    char* reply = malloc(sizeof(char) * 100 * total);
+    strcat(reply, "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>");
+    for(i=0;i<total;i++){
+        char* newest = res[i];
+        strcat(reply, "<p>");
+        strcat(reply, newest);
+    }
+  }else if(strcmp(request, "/sort.html")){
+
+  }else if(strcmp(request, "/filter.html")){
+
+  }
+  char* reply_after = "</html>\n";
+  strcat(reply, reply_after);
+  send(fd, reply, strlen(reply), 0);
+  free(reply);
+  pthread_mutex_lock(&lock);
+  thread_check[input->index] = 0;
+  pthread_mutex_unlock(&lock);
+
+
+}
+int[] thread_check  = int[10];
 int start_server(int PORT_NUMBER, char* file_name)
 {
-
+      pthread_t* thread_array = pthread_t[10];
       // structs to represent the server and client
       struct sockaddr_in server_addr,client_addr;    
       
@@ -80,22 +115,47 @@ int start_server(int PORT_NUMBER, char* file_name)
         	// print it to standard out
         	printf("This is the incoming request:\n%s\n", request);
 
+          char* input = malloc(sizeof(char) * 20);
+          int i = 5;
+          while(request[i] != '/'){
+            strcat(input, request[i]);
+            i++;
+          }
+          // pthread_t newest;
+          int r;
+          int r_join;
+          void* thread_return;
+          while(1){
+            for(thread_index = 0; thread_index < 10; thread_index++){
+              if(thread_array[thread_index] == 0){
+                r_join = pthread_join(thread_array[thread_index], &thread_return);
+                thread_input new_input;
+                new_input.index = thread_index;
+                new_input.function = input;
+                r = pthread_create(&thread_array[thread_index], NULL, &fun1, &new_input);
+                if(r != 0){
+                  printf("THREAD CREATION ERROR");
+                }
+                thread_check[thread_index] = 1;
+                break;
+              }
+            }
+            break;
+          }
+
         	// this is the message that we'll send back
           // use for loop to display all the strings in the file-haoran
-          char* reply = malloc(sizeof(char) * 100 * total);
-          strcat(reply, "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>");
-          for(i=0;i<total;i++){
-            char* newest = res[i];
-            strcat(reply, "<p>");
-            strcat(reply, newest);
+          // char* reply = malloc(sizeof(char) * 100 * total);
+          // strcat(reply, "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>");
+          // for(i=0;i<total;i++){
+          //   char* newest = res[i];
+          //   strcat(reply, "<p>");
+          //   strcat(reply, newest);
+          // }
             // printf("%s", reply);
             // 6. send: send the outgoing message (response) over the socket
             // note that the second argument is a char*, and the third is the number of chars 
-          }
-          char* reply_after = "</html>\n";
-          strcat(reply, reply_after);
-          send(fd, reply, strlen(reply), 0);
-          free(reply);
+          
         }
       	
       	// 7. close: close the connection

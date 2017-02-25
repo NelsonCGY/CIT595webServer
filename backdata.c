@@ -210,29 +210,24 @@ course** sort_four(int dir, int kind, course** courses, int num){ // dir: 1 for 
     return sorted;
 }
 
-int avg_enroll(course** courses, int num){
-    int tot = 0, i;
-    for(i=0; i<num; i++){
-        tot += courses[i]->enroll;
-    }
-    return tot/num;
-}
-
-float avg_three(int kind, course** courses, int num){ // kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
-    float totf = 0.0;
+float avg_four(int kind, course** courses, int num){ // kind: 2 for c_quality, 3 for c_difficulty, 4 for i_quality
+    float tot = 0.0;
     int i;
     for(i=0; i<num; i++){
+        if(kind==1){
+            tot += courses[i]->enroll;
+        }
         if(kind==2){
-            totf += courses[i]->c_quality;
+            tot += courses[i]->c_quality;
         }
         else if(kind==3){
-            totf += courses[i]->c_difficulty;
+            tot += courses[i]->c_difficulty;
         }
         else if(kind==4){
-            totf += courses[i]->i_quality;
+            tot += courses[i]->i_quality;
         }
     }
-    return totf/num;
+    return tot/num;
 }
 
 course* max_four(int kind, course** courses, int num){ // kind: 1 for enroll, 2 for c_quality, 3 for c_difficulty, 4 for i_quality

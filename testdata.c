@@ -22,16 +22,15 @@ int main(){
     course* maxD = max_four(3, courses, total);
     printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);*/
 
-    // avg test
-    /*printf("\nAvg enroll %d\n", avg_enroll(courses, total));
-    printf("\nAvg difficulty %.2f\n", avg_three(3, courses, total));*/
-
-    // sort test
+    // sort tes
     course** sortC = sort_four(1,4,courses,total);
     char** res = tostring(sortC,total);
     for(i=0;i<total;i++){
         printf("%s, %d\n", res[i],i+1);
     }
+
+    // avg test
+    printf("\nAvg difficulty %.2f\n", avg_four(3, courses, total));
 
     // filter test
     /*course** filterC = filter_enroll(2,32,courses,&total);

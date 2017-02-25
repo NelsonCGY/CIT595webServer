@@ -17,7 +17,7 @@ http://www.binarii.com/files/papers/c_sockets.txt
 // #include "backdata.h"
 #include "backdata.c"
 
-pthread_mutex_t lock;
+pthread_mutex_t t_lock, c_lock;
 int[] thread_check  = int[10];
 
 typedef struct Thread_input{

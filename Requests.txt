@@ -16,3 +16,5 @@ A avgKind -- find average of courses; avgKind is 1 for enroll, 2 for courseQuali
 M maxKind -- find max of the courses; maxKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
 
 N minKind -- find min of the courses; minKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
+
+Q -- exit connection

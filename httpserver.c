@@ -16,11 +16,16 @@ http://www.binarii.com/files/papers/c_sockets.txt
 #include <string.h>
 // #include "backdata.h"
 #include "backdata.c"
+
 pthread_mutex_t lock;
+int[] thread_check  = int[10];
+
 typedef struct Thread_input{
   int index;
-  char* function;
+  char* req[30];
 } thread_input;
+
+
 void* sent_response(void* p){
   thread_input* input = (thread_input) p;
   int i;
@@ -50,7 +55,9 @@ void* sent_response(void* p){
 
 
 }
-int[] thread_check  = int[10];
+
+
+
 int start_server(int PORT_NUMBER, char* file_name)
 {
       pthread_t* thread_array = pthread_t[10];
@@ -115,13 +122,12 @@ int start_server(int PORT_NUMBER, char* file_name)
         	// print it to standard out
         	printf("This is the incoming request:\n%s\n", request);
 
-          char* input = malloc(sizeof(char) * 20);
+          char rq[30];
           int i = 5;
-          while(request[i] != '/'){
-            strcat(input, request[i]);
+          while(!(request[i] == ' ' && request[i+1] == 'H' && request[i+2] == 'T' && request[i+3] == 'T' && request[i+4] == 'P' && request[i+5] == '/')){
+            rq[i-5] =  request[i];
             i++;
           }
-          // pthread_t newest;
           int r;
           int r_join;
           void* thread_return;
@@ -131,7 +137,7 @@ int start_server(int PORT_NUMBER, char* file_name)
                 r_join = pthread_join(thread_array[thread_index], &thread_return);
                 thread_input new_input;
                 new_input.index = thread_index;
-                new_input.function = input;
+                strcpy(new_input.req, rq);
                 r = pthread_create(&thread_array[thread_index], NULL, &fun1, &new_input);
                 if(r != 0){
                   printf("THREAD CREATION ERROR");

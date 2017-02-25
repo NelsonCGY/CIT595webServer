@@ -20,19 +20,18 @@ int main(){
     /*course* minR = min_four(1, courses, total);
     printf("\nMinR: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", minR->major, minR->c_num, minR->c_subnum, minR->instructor, minR->enroll, minR->c_quality, minR->c_difficulty, minR->i_quality);
     course* maxD = max_four(3, courses, total);
-    printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);
+    printf("\nMaxD: %s-%d-%s, %s, %d, %.2f, %.2f, %.2f\n", maxD->major, maxD->c_num, maxD->c_subnum, maxD->instructor, maxD->enroll, maxD->c_quality, maxD->c_difficulty, maxD->i_quality);*/
 
     // avg test
-    printf("\nAvg enroll %d\n", avg_enroll(courses, total));
+    /*printf("\nAvg enroll %d\n", avg_enroll(courses, total));
     printf("\nAvg difficulty %.2f\n", avg_three(3, courses, total));*/
 
     // sort test
-    /*course** sortC = sort_enroll(1,courses,total);
-    course** sortC = sort_three(1,4,courses,total);
+    course** sortC = sort_four(1,4,courses,total);
     char** res = tostring(sortC,total);
     for(i=0;i<total;i++){
         printf("%s, %d\n", res[i],i+1);
-    }*/
+    }
 
     // filter test
     /*course** filterC = filter_enroll(2,32,courses,&total);
@@ -45,17 +44,17 @@ int main(){
 
     // find test
     //char a[] = "Ben"; course** findC = find_instructor(a, courses, &total);
-    char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
-    char** res = tostring(findC,total);
+    //char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
+    /*char** res = tostring(findC,total);
     for(i=0;i<total;i++){
         printf("%s, %d\n", res[i],i+1);
-    }
+    }*/
 
     // memory free
     free_char(res);
-    //free(sortC);
+    free(sortC);
     //free(filterC);
-    free(findC);
+    //free(findC);
     free_courses_all(courses);
     return 0;
 }

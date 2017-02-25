@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 course** readfile(char* filename, int* total){ // filename passed by argv[1], total will be counted after courses list is made and will not change, what will change is num in following functions
-    FILE* c_evals = fopen(filename,"rw");
+    FILE* c_evals = fopen(filename,"r");
     if(!c_evals){perror("Error opening file"); exit(-1);}
     printf("File opened!\n");
     course** courses = (course**)malloc(sizeof(course*)*666);
@@ -313,10 +313,10 @@ char** tostring(course** courses, int num){
     int i;
     for(i=0; i<num+1; i++){res[i] = NULL;}
     for(i=0; i<num; i++){
-        char* c_info = (char*)malloc(sizeof(char)*65);
-        memset(c_info,0,65);
+        char* c_info = (char*)malloc(sizeof(char)*120);
+        memset(c_info,0,120);
         if(!c_info){perror("Error malloc space"); exit(-1);}
-        sprintf(c_info, "%s-%d-%s, %s, %d, %.2f, %.2f, %.2f", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality);
+        sprintf(c_info, "%s-%d-%-10s\t%-30s\t%-16d\t%-16.2f\t%-16.2f\t%-16.2f", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality);
         res[i] = c_info;
     }
     return res;

@@ -1,14 +1,17 @@
 CC = clang
 ARGS = -Wall
 
-all: readfile
+all: test requests
 
 backdata.o: backdata.c backdata.h
 	$(CC) -c backdata.c
 
-readfile: backdata.o testdata.c
-	$(CC) -o readfile $(ARGS) backdata.o testdata.c
+test: backdata.o testdata.c
+	$(CC) -o test $(ARGS) backdata.o testdata.c
 	
+requests: backdata.o requests.c
+	$(CC) -o requests $(ARGS) backdata.o requests.c
+
 clean: 
-	rm -rf readfile *.o
+	rm -rf test requests *.o
 

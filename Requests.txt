@@ -1,0 +1,20 @@
+RequestType requestArguments -- operation
+
+R -- reset course list; will print the original course list from file
+
+C major courseNumber -- search courses by course major or number or both; "*" or "\0" for all majors; 0 for all courseNumbers
+
+I iName -- search courses by instructor; could be part of his name for iName
+
+F dir filterKind filterStandard -- filter courses; dir is 1 for larger than and 2 for smaller than; filterKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality; filterStandard is the standard for filter
+
+
+S dir sortKind -- sort courses; dir is 1 for ascending and 2 for descending; sortKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
+
+A avgKind -- find average of courses; avgKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
+
+M maxKind -- find max of the courses; maxKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
+
+N minKind -- find min of the courses; minKind is 1 for enroll, 2 for courseQuality, 3 for courseDifficulty and 4 for instructorQuality
+
+Q -- exit connection

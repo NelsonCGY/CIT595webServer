@@ -19,11 +19,9 @@ course** find_instructor(char* instructor, course** courses, int* num); // find 
 course** filter_enroll(int dir, int k, course** courses, int* num); // filter courses with enroll number, return the list of courses and total number
 course** filter_three(int dir, int kind, float k, course** courses, int* num);// filter courses with one of three course scores, return the list of courses and total number
 
-course** sort_enroll(int dir, course** courses, int num); // sort courses with enroll number, return the list of sorted courses
-course** sort_three(int dir, int kind, course** courses, int num); // sort courses with one of three course scores, return the list of sorted courses
+course** sort_four(int dir, int kind, course** courses, int num); // sort courses with one of four course info, return the list of sorted courses
 
-int avg_enroll(course** courses, int num); // calculate average enroll numbers, return the result by int
-float avg_three(int kind, course** courses, int num); // calculate one of three average course scores, return the result by float
+float avg_four(int kind, course** courses, int num); // calculate one of four average course info, return the result by float
 
 course* max_four(int kind, course** courses, int num); // find the maximum of one of four course info, return the max course
 course* min_four(int kind, course** courses, int num); // find the minimum of one of four course info, return the max course

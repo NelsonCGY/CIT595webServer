@@ -29,5 +29,6 @@ course* max_four(int kind, course** courses, int num); // find the maximum of on
 course* min_four(int kind, course** courses, int num); // find the minimum of one of four course info, return the max course
 
 char** tostring(course** courses, int num); // make a list of courses to a list of output string
+char* print_table(course** course, int num); //return the html string representable of data
 void free_char(char** res); // clear string list
 void free_courses_all(course** courses); // clear courses list and inner course information

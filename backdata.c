@@ -5,7 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 
-course** readfile(char* filename, int* total){ // filename passed by argv[1], total will be counted after courses list is made and will not change, what will change is num in following functions
+// filename passed by argv[1], total will be counted after courses list is made and will not change
+//, what will change is num in following functions
+course** readfile(char* filename, int* total){ 
     FILE* c_evals = fopen(filename,"rw");
     if(!c_evals){perror("Error opening file"); exit(-1);}
     printf("File opened!\n");
@@ -320,6 +322,58 @@ char** tostring(course** courses, int num){
         res[i] = c_info;
     }
     return res;
+}
+
+char* print_table(course** courses, int num){
+     char* table = malloc(sizeof(char) * 100 * num);
+          for(int i=0;i< num;i++){
+              strcat(table, "<tr>\n");
+              /*Column one course*/
+              char* course = (char*)malloc(sizeof(char)*20);
+              memset(course,0,20);
+              sprintf(course, "%s-%d-%s", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum);
+              strcat(table, "<td>");
+              strcat(table, course);
+              strcat(table, "</td>\n");
+              /*Column two Instructor*/
+              char* instructor = (char*)malloc(sizeof(char)*60);
+              memset(instructor,0,60);
+              sprintf(instructor, "%s",courses[i]->instructor);
+              strcat(table, "<td>");
+              strcat(table, instructor);
+              strcat(table, "</td>\n");
+              /*Column three Enroll*/
+              char* enroll = (char*)malloc(sizeof(char)*3);
+              memset(enroll,0,3);
+              sprintf(enroll, "%d",courses[i]->enroll);
+              strcat(table, "<td>");
+              strcat(table, enroll);
+              strcat(table, "</td>\n");
+              /*Column four course quality*/
+              char* c_quality = (char*)malloc(sizeof(char)*5);
+              memset(c_quality,0,5);
+              sprintf(c_quality, "%.2f",courses[i]->c_quality);
+              strcat(table, "<td>");
+              strcat(table, c_quality);
+              strcat(table, "</td>\n");
+              /*Column five Instructor Quality*/
+              char* i_quality = (char*)malloc(sizeof(char)*5);
+              memset(i_quality,0,5);
+              sprintf(i_quality, "%.2f",courses[i]->i_quality);
+              strcat(table, "<td>");
+              strcat(table, i_quality);
+              strcat(table, "</td>\n");
+              /*Column six course difficulty*/
+              char* c_difficulty = (char*)malloc(sizeof(char)*5);
+              memset(c_difficulty,0,5);
+              sprintf(c_difficulty, "%.2f",courses[i]->c_difficulty);
+              strcat(table, "<td>");
+              strcat(table, c_difficulty);
+              strcat(table, "</td>\n");
+              //postprocessing
+              strcat(table, "</tr>\n");
+      }
+      return table;
 }
 
 void free_char(char** res){

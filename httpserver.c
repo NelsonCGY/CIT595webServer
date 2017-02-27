@@ -16,6 +16,7 @@ http://www.binarii.com/files/papers/c_sockets.txt
 #include <string.h>
 // #include "backdata.h"
 #include "backdata.c"
+
 int start_server(int PORT_NUMBER, char* file_name)
 {
 
@@ -59,8 +60,7 @@ int start_server(int PORT_NUMBER, char* file_name)
 
       //Read file here - haoran
       int total, i;
-      course** courses = readfile(file_name, &total);
-      char** res = tostring(courses,total);
+      //res get the data
       // char* newest = res[0];
       // printf("%s", newest);
       // 4. accept: wait here until we get a connection on that port
@@ -68,10 +68,12 @@ int start_server(int PORT_NUMBER, char* file_name)
       int fd = accept(sock, (struct sockaddr *)&client_addr,(socklen_t *)&sin_size);
       if (fd != -1) {
       	printf("Server got a connection from (%s, %d)\n", inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
-            
+        course** courses = readfile(file_name, &total);
+        char** res = tostring(courses,total);
       	// buffer to read data into
       	char request[1024];
-      	//loop start here-Haoran
+        char* reply = malloc(sizeof(char) * 100000);
+        char* cur_line = malloc(sizeof(char) * 100);
         while(1){
         	// 5. recv: read incoming message (request) into buffer
         	int bytes_received = recv(fd,request,1024,0);
@@ -79,29 +81,39 @@ int start_server(int PORT_NUMBER, char* file_name)
         	request[bytes_received] = '\0';
         	// print it to standard out
         	printf("This is the incoming request:\n%s\n", request);
-
-        	// this is the message that we'll send back
-          // use for loop to display all the strings in the file-haoran
-          char* reply = malloc(sizeof(char) * 100 * total);
-          strcat(reply, "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html>");
-          for(i=0;i<total;i++){
-            char* newest = res[i];
-            strcat(reply, "<p>");
-            strcat(reply, newest);
-            // printf("%s", reply);
-            // 6. send: send the outgoing message (response) over the socket
-            // note that the second argument is a char*, and the third is the number of chars 
+          /**
+            Incorporate the html file which is in the same folder
+            Yiwei Guo
+          */
+          if (strcmp(request, "GET /sort/1 HTTP/1.1")){
+              courses = sort_enroll(1, courses, total);
           }
-          char* reply_after = "</html>\n";
-          strcat(reply, reply_after);
+          FILE* header = fopen("template.html", "r");
+          /*Generate the table content dynamically*/
+          char* table = print_table(courses, total);
+          /*Process the course info*/
+          while(!feof(header))
+          {     
+              /*
+              Read from html file line by line
+              */
+              char* line = fgets(cur_line, 100, header);
+              if (strcmp(line, "<!--add dynamic coutent-->\n") == 0){
+                  strcat(reply, cur_line);
+                  strcat(reply,table);
+              }else{
+                  strcat(reply, cur_line);
+              }
+
+          }
           send(fd, reply, strlen(reply), 0);
-          free(reply);
-        }
-      	
-      	// 7. close: close the connection
-      	close(fd);
-      	printf("Server closed connection\n");
-      }
+          memset(reply, 0,sizeof(char) * 10000);
+          memset(request,0,sizeof(char)*1024);
+        } 
+  }
+  // 7. close: close the connection
+  close(fd);
+  printf("Server closed connection\n");
 
   // 8. close: close the socket
   close(sock);
@@ -116,7 +128,7 @@ int main(int argc, char *argv[])
 {
   // check the number of arguments
   if (argc != 3) {
-      printf("\nUsage: %s [port_number]\n", argv[0]);
+      printf("\nUsage: %s port_number file_name\n", argv[0]);
       exit(-1);
   }
 
@@ -127,12 +139,6 @@ int main(int argc, char *argv[])
   }
   char* file_name = argv[2];
   printf("File name is %s", file_name);
-  // course** courses = readfile(file_name, &total);
-  // char** res = tostring(courses,total);
-  // for(i=0;i<total;i++){
-  //     //printf("%s-%d-%s, %s, %d, %.2f, %.2f, %.2f, %d\n", (courses[i])->major, (courses[i])->c_num, (courses[i])->c_subnum, (courses[i])->instructor, (courses[i])->enroll, (courses[i])->c_quality,(courses[i])->c_difficulty, (courses[i])->i_quality, i);
-  //     printf("%s, %d\n", res[i], i);
-  // }
   start_server(port_number, file_name);
 }
 

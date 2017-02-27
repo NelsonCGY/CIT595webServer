@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "backdata.h"
-
+#include "backdata.c"
 /* data function tests - gongyao */
 int main(){
     int total, i;
     course** courses = readfile("course_evals.txt", &total);
     printf("total %d\n", total);
-
+    char* table = print_table(courses, total);
+    printf("%s", table);
     // tostring test
     /*char** res = tostring(courses,total);
     for(i=0;i<total;i++){
@@ -45,17 +45,17 @@ int main(){
 
     // find test
     //char a[] = "Ben"; course** findC = find_instructor(a, courses, &total);
-    char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
-    char** res = tostring(findC,total);
-    for(i=0;i<total;i++){
-        printf("%s, %d\n", res[i],i+1);
-    }
+    // char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
+    // char** res = tostring(findC,total);
+    // for(i=0;i<total;i++){
+    //     printf("%s, %d\n", res[i],i+1);
+    // }
 
     // memory free
-    free_char(res);
-    //free(sortC);
-    //free(filterC);
-    free(findC);
-    free_courses_all(courses);
+    // free_char(res);
+    // //free(sortC);
+    // //free(filterC);
+    // free(findC);
+    // free_courses_all(courses);
     return 0;
 }

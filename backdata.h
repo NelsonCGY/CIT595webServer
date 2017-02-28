@@ -1,6 +1,7 @@
 /* a head file with functions implemented for basic data process - gongyao */
 
-typedef struct Course{
+typedef struct Course
+{
     char major[5];
     int c_num;
     char c_subnum[5];
@@ -9,7 +10,7 @@ typedef struct Course{
     float c_quality;
     float c_difficulty;
     float i_quality;
-}course; // structure for a single course
+} course; // structure for a single course
 
 course** readfile(char* filename, int* total); // reads a course_evals file and return the course information with a structure list and total number
 
@@ -27,6 +28,6 @@ course* max_four(int kind, course** courses, int num); // find the maximum of on
 course* min_four(int kind, course** courses, int num); // find the minimum of one of four course info, return the max course
 
 char** tostring(course** courses, int num); // make a list of courses to a list of output string
-char* print_table(course** course, int num); //return the html string representable of data
+char* print_table(course** courses, int num); // print a table of course information that can be used for html string
 void free_char(char** res); // clear string list
 void free_courses_all(course** courses); // clear courses list and inner course information

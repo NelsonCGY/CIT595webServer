@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "backdata.c"
+#include "backdata.h"
+
 /* data function tests - gongyao */
-int main(){
+int main()
+{
     int total, i;
     course** courses = readfile("course_evals.txt", &total);
     printf("total %d\n", total);
-    char* table = print_table(courses, total);
-    printf("%s", table);
+
     // tostring test
     /*char** res = tostring(courses,total);
     for(i=0;i<total;i++){
@@ -25,7 +26,8 @@ int main(){
     // sort tes
     course** sortC = sort_four(1,4,courses,total);
     char** res = tostring(sortC,total);
-    for(i=0;i<total;i++){
+    for(i=0; i<total; i++)
+    {
         printf("%s, %d\n", res[i],i+1);
     }
 
@@ -43,20 +45,6 @@ int main(){
 
     // find test
     //char a[] = "Ben"; course** findC = find_instructor(a, courses, &total);
-<<<<<<< HEAD
-    // char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
-    // char** res = tostring(findC,total);
-    // for(i=0;i<total;i++){
-    //     printf("%s, %d\n", res[i],i+1);
-    // }
-
-    // memory free
-    // free_char(res);
-    // //free(sortC);
-    // //free(filterC);
-    // free(findC);
-    // free_courses_all(courses);
-=======
     //char b[]="cI"; course** findC = find_course(b, 57, courses, &total);
     /*char** res = tostring(findC,total);
     for(i=0;i<total;i++){
@@ -69,6 +57,5 @@ int main(){
     //free(filterC);
     //free(findC);
     free_courses_all(courses);
->>>>>>> ec5c01c75de3e0845894be7089d004fb28c0e7d9
     return 0;
 }

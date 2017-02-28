@@ -20,7 +20,7 @@ http://www.binarii.com/files/papers/c_sockets.txt
 
 pthread_mutex_t t_lock, c_lock;
 int thread_check[10] = {0};
-int total = 0, res_num = 0;
+int total = 0, res_num = 0, initial = 0;
 course **courses, **res_courses;
 
 typedef struct Thread_input
@@ -270,6 +270,7 @@ void* send_response(void* p)
     // 6. send: send the outgoing message (response) over the socket
     // note that the second argument is a char*, and the third is the number of chars
     send(input->fd, reply, strlen(reply), 0);
+    close(input->fd);
     fflush(stdout);
 
     fclose(header);
@@ -294,6 +295,16 @@ void* send_response(void* p)
     return NULL;
 }
 
+void* try_exit(void* p)
+{
+    char input = 'a';
+    while(input != 'q' && input != 'Q')
+    {
+        input = getchar();
+    }
+    initial = 0;
+    return NULL;
+}
 
 
 int start_server(int PORT_NUMBER, char* file_name)
@@ -343,13 +354,12 @@ int start_server(int PORT_NUMBER, char* file_name)
 
     // 4. accept: wait here until we get a connection on that port
     int sin_size = sizeof(struct sockaddr_in);
-    int initial=0;
     int fd = accept(sock, (struct sockaddr *)&client_addr,(socklen_t *)&sin_size);
     if (fd != -1)
     {
         printf("Server got a connection from (%s, %d)\n", inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
         // buffer to read data into
-        char request[1024];
+        char request[1024] = {'\0'};
 
         // 5. recv: read incoming message (request) into buffer
         int bytes_received = recv(fd,request,1024,0);
@@ -394,11 +404,11 @@ int start_server(int PORT_NUMBER, char* file_name)
         while(initial==1)
         {
             printf("Accepting next request:\n");
+
             fd = accept(sock, (struct sockaddr *)&client_addr,(socklen_t *)&sin_size);
             bytes_received = recv(fd,request,1024,0);
             request[bytes_received] = '\0';
             printf("This is the incoming request:\n%s\n", request);
-
             if(strcmp(request, "GET /favicon.ico HTTP/1.1")==0)
             {
                 continue;
@@ -417,7 +427,9 @@ int start_server(int PORT_NUMBER, char* file_name)
                 i++;
             }
             created = 0;
-            while(1)
+
+
+            while(initial==1)
             {
                 for(thread_index = 0; thread_index < 10; thread_index++)
                 {
@@ -463,7 +475,7 @@ int start_server(int PORT_NUMBER, char* file_name)
                 pthread_join(thread_array[thread_index], NULL);
             }
         }
-        if(1)
+        if(res_courses)
         {
             free(res_courses);
         }
@@ -502,7 +514,10 @@ int main(int argc, char *argv[])
     }
     char* file_name = argv[2];
 
+    pthread_t exitT;
+    pthread_create(&exitT, NULL, &try_exit, NULL);
     start_server(port_number, file_name);
+    pthread_join(exitT, NULL);
     sleep(30);
     printf("Server shut down\n");
 }

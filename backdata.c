@@ -505,8 +505,8 @@ char** tostring(course** courses, int num)
 
 char* print_table(course** courses, int num)
 {
-    char* table = (char*)malloc(sizeof(char) * 160 * num);
-    memset(table, 0, 160 * num);
+    char* table = (char*)malloc(sizeof(char) * 300 * num);
+    memset(table, 0, 300 * num);
     int i;
     for(i = 0; i< num; i++)
     {

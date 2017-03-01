@@ -199,8 +199,8 @@ void* send_response(void* p)
     char cur_line[100] = {'\0'};
     if(choose==0)
     {
-        reply = (char*)malloc(sizeof(char) * 160 * (tmp_num + 100));
-        memset(reply, 0, 160 * (tmp_num + 100));
+        reply = (char*)malloc(sizeof(char) * 300 * (tmp_num + 160));
+        memset(reply, 0, 300 * (tmp_num + 160));
         header = fopen("template.html", "r");
         /*Generate the table content dynamically*/
         table_html = print_table(tmp_courses, tmp_num);
@@ -222,8 +222,8 @@ void* send_response(void* p)
     }
     else if(choose==1)
     {
-        reply = (char*)malloc(sizeof(char) * 160 * 110);
-        memset(reply, 0, 160 * 110);
+        reply = (char*)malloc(sizeof(char) * 300 * 160);
+        memset(reply, 0, 300 * 160);
         header = fopen("template.html", "r");
         table_html = (char*)malloc((sizeof(char) * 50));
         memset(table_html, 0, 50);
@@ -247,8 +247,8 @@ void* send_response(void* p)
     }
     else
     {
-        reply = (char*)malloc(sizeof(char) * 160 * 110);
-        memset(reply, 0, 160 * 110);
+        reply = (char*)malloc(sizeof(char) * 300 * 160);
+        memset(reply, 0, 300 * 160);
         header = fopen("template.html", "r");
         table_html = print_table(&m, 1);
         while(!feof(header))
@@ -271,7 +271,7 @@ void* send_response(void* p)
     // note that the second argument is a char*, and the third is the number of chars
     send(input->fd, reply, strlen(reply), 0);
     close(input->fd);
-    printf("Server closed connection\n");
+    printf("Sent! Server closed connection\n");
     fflush(stdout);
 
     fclose(header);
@@ -279,7 +279,6 @@ void* send_response(void* p)
     free(table_html);
     pthread_mutex_lock(&c_lock);
     free(res_courses);
-    printf("Sent!!!!\n");
     res_courses = tmp_courses;
     res_num = tmp_num;
     pthread_mutex_unlock(&c_lock);

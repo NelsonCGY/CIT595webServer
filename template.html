@@ -37,14 +37,23 @@ th {
     </div>
 
     <form class="navbar-form navbar-left" role="search">
+    <a href="R"><button type="button" class="btn btn-default">Reset</button></a>
     <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search">
+        <input type="text" class="form-control" placeholder="Search Major (* for all)">
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search Number (0 for all)">
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search Instructor">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+    <a href="Q"><button type="button" class="btn btn-default">Exit</button></a>
     </form>
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort↑ <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp↑ <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="S_1_1">Enroll</a></li>
             <li><a href = "S_1_2">Course Quality</a></li>
@@ -53,12 +62,60 @@ th {
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort↓ <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp↓ <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="S_2_1">Enroll</a></li>
             <li><a href = "S_2_2">Course Quality</a></li>
             <li><a href = "S_2_3">Course Difficulty</a></li>
             <li><a href = "S_2_4">Instructor Quality</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Average <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="A_1">Enroll</a></li>
+            <li><a href = "A_2">Course Quality</a></li>
+            <li><a href = "A_3">Course Difficulty</a></li>
+            <li><a href = "A_4">Instructor Quality</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Max <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="M_1">Enroll</a></li>
+            <li><a href = "M_2">Course Quality</a></li>
+            <li><a href = "M_3">Course Difficulty</a></li>
+            <li><a href = "M_4">Instructor Quality</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Min <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="N_1">Enroll</a></li>
+            <li><a href = "N_2">Course Quality</a></li>
+            <li><a href = "N_3">Course Difficulty</a></li>
+            <li><a href = "N_4">Instructor Quality</a></li>
+          </ul>
+        </li>
+        <li class="form-group">
+          <input type="text" class="form-control" placeholder="Filter">
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filter&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp↑ <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="F_1_">Enroll</a></li>
+            <li><a href = "F_1_">Course Quality</a></li>
+            <li><a href = "F_1_">Course Difficulty</a></li>
+            <li><a href = "F_1_">Instructor Quality</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filter&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp↓ <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="F_2_">Enroll</a></li>
+            <li><a href = "F_2_">Course Quality</a></li>
+            <li><a href = "F_2_">Course Difficulty</a></li>
+            <li><a href = "F_2_">Instructor Quality</a></li>
           </ul>
         </li>
     </ul>

@@ -535,17 +535,17 @@ char* print_table(course** courses, int num)
         strcat(table, "<td>");
         strcat(table, c_quality);
         strcat(table, "</td>\n");
-        /*Column five Instructor Quality*/
-        char i_quality[5] = {'\0'};
-        sprintf(i_quality, "%.2f",courses[i]->i_quality);
-        strcat(table, "<td>");
-        strcat(table, i_quality);
-        strcat(table, "</td>\n");
-        /*Column six course difficulty*/
+        /*Column five course difficulty*/
         char c_difficulty[5] = {'\0'};
         sprintf(c_difficulty, "%.2f",courses[i]->c_difficulty);
         strcat(table, "<td>");
         strcat(table, c_difficulty);
+        strcat(table, "</td>\n");
+        /*Column six Instructor Quality*/
+        char i_quality[5] = {'\0'};
+        sprintf(i_quality, "%.2f",courses[i]->i_quality);
+        strcat(table, "<td>");
+        strcat(table, i_quality);
         strcat(table, "</td>\n");
         //postprocessing
         strcat(table, "</tr>\n");

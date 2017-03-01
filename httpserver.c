@@ -271,6 +271,7 @@ void* send_response(void* p)
     // note that the second argument is a char*, and the third is the number of chars
     send(input->fd, reply, strlen(reply), 0);
     close(input->fd);
+    printf("Server closed connection\n");
     fflush(stdout);
 
     fclose(header);
@@ -303,6 +304,11 @@ void* try_exit(void* p)
         input = getchar();
     }
     initial = 0;
+    printf("Request to shut down server!\n");
+    if(courses)
+    {
+        printf("\n******\nPlease request one more time to shut down server\n******\n\n");
+    }
     return NULL;
 }
 
@@ -319,13 +325,15 @@ int start_server(int PORT_NUMBER, char* file_name)
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Socket");
-        exit(1);
+        printf("\n******\nPlease type q in the console to shut down server\n******\n\n");
+        return -1;
     }
     int temp = 0;
     if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&temp,sizeof(int)) == -1)
     {
         perror("Setsockopt");
-        exit(1);
+        printf("\n******\nPlease type q in the console to shut down server\n******\n\n");
+        return -1;
     }
 
     // configure the server
@@ -338,14 +346,16 @@ int start_server(int PORT_NUMBER, char* file_name)
     if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
         perror("Unable to bind");
-        exit(1);
+        printf("\n******\nPlease type q in the console to shut down server\n******\n\n");
+        return -1;
     }
 
     // 3. listen: indicates that we want to listen to the port to which we bound; second arg is number of allowed connections
     if (listen(sock, 1) == -1)
     {
         perror("Listen");
-        exit(1);
+        printf("\n******\nPlease type q in the console to shut down server\n******\n\n");
+        return -1;
     }
 
     // once you get here, the server is set up and about to start listening
@@ -409,7 +419,7 @@ int start_server(int PORT_NUMBER, char* file_name)
             bytes_received = recv(fd,request,1024,0);
             request[bytes_received] = '\0';
             printf("This is the incoming request:\n%s\n", request);
-            if(strcmp(request, "GET /favicon.ico HTTP/1.1")==0)
+            if(strncmp(request, "GET /favicon.ico", 16)==0)
             {
                 continue;
             }
@@ -480,6 +490,7 @@ int start_server(int PORT_NUMBER, char* file_name)
             free(res_courses);
         }
         free_courses_all(courses);
+        courses = NULL;
         printf("Response ended!\n");
         // operation loop ends here
 
@@ -490,7 +501,7 @@ int start_server(int PORT_NUMBER, char* file_name)
 
     // 8. close: close the socket
     close(sock);
-    printf("Server shutting down\n");
+    
 
     return 0;
 }
@@ -516,8 +527,15 @@ int main(int argc, char *argv[])
 
     pthread_t exitT;
     pthread_create(&exitT, NULL, &try_exit, NULL);
+
     start_server(port_number, file_name);
+
+    if(initial == 1)
+    {
+        printf("\n******\nPlease type q in the console to shut down server\n******\n\n");
+    }
     pthread_join(exitT, NULL);
+    printf("Server shutting down\n");
     sleep(30);
     printf("Server shut down\n");
 }

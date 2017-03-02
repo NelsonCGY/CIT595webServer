@@ -68,19 +68,21 @@ void* send_response(void* req)
     else if(request[0] == 'I')
     {
         char instructor[30] = {'\0'};
-        for(i=2; request[i] != '_' && i < strlen(request); i++)
+        i=1;
+        int j=2;
+        while(i<strlen(request))
         {
-            instructor[i - 2] = request[i];
+            for(++i; request[i]!='%' && i<strlen(request); i++)
+            {
+                instructor[i-j] = request[i];
+            }
+            if(i<strlen(request))
+            {
+                instructor[i-j] = ' ';
+                i += 2;
+                j += 2;
+            }
         }
-        if(i<strlen(request))
-        {
-            instructor[i - 2] = ' ';
-        }
-        for(++i; i<strlen(request); i++)
-        {
-            instructor[i - 2] = request[i];
-        }
-        printf("ins %s",instructor);
         tmp_courses = find_instructor(instructor, src_courses, &tmp_num);
     }
     else if(request[0] == 'F')
@@ -212,7 +214,7 @@ int main()
 
     send_response("R");
     send_response("C_c_5");
-    send_response("I_Ben");
+    send_response("I_BENjamin%20c.%20p");
     send_response("F_1_1_30");
     send_response("F_2_4_1.7");
     send_response("S_1_4");

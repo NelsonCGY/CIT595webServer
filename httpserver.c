@@ -96,18 +96,21 @@ void* send_response(void* p)
     }
     else if(request[0] == 'I')
     {
-        char instructor[30] = {'\0'};
-        for(i=2; request[i] != '_' && i < strlen(request); i++)
+       char instructor[30] = {'\0'};
+        i=1;
+        int j=2;
+        while(i<strlen(request))
         {
-            instructor[i - 2] = request[i];
-        }
-        if(i<strlen(request))
-        {
-            instructor[i - 2] = ' ';
-        }
-        for(++i; i<strlen(request); i++)
-        {
-            instructor[i - 2] = request[i];
+            for(++i; request[i]!='%' && i<strlen(request); i++)
+            {
+                instructor[i-j] = request[i];
+            }
+            if(i<strlen(request))
+            {
+                instructor[i-j] = ' ';
+                i += 2;
+                j += 2;
+            }
         }
         tmp_courses = find_instructor(instructor, src_courses, &tmp_num);
     }

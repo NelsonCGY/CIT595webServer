@@ -338,6 +338,10 @@ course** sort_four(int dir, int kind, course** courses, int num)  // dir: 1 for 
     int i;
     for(i=0; i<(num+1); i++)
     {
+        sorted[i] = NULL;
+    }
+    for(i=0; i<num; i++)
+    {
         sorted[i] = courses[i];
     }
     if(kind==1)
@@ -391,7 +395,7 @@ float avg_four(int kind, course** courses, int num)  // kind: 2 for c_quality, 3
 
 course* max_four(int kind, course** courses, int num)  // kind: 1 for enroll, 2 for c_quality, 3 for c_difficulty, 4 for i_quality
 {
-    course* res;
+    course* res = NULL;
     int i, max=0;
     float maxf=0.0;
     for(i=0; i<num; i++)
@@ -434,7 +438,7 @@ course* max_four(int kind, course** courses, int num)  // kind: 1 for enroll, 2 
 
 course* min_four(int kind, course** courses, int num)  // kind: 1 for enroll, 2 for c_quality, 3 for c_difficulty, 4 for i_quality
 {
-    course* res;
+    course* res = NULL;
     int i, min=1000;
     float minf=1000.0;
     for(i=0; i<num; i++)
@@ -505,8 +509,13 @@ char** tostring(course** courses, int num)
 
 char* print_table(course** courses, int num)
 {
-    char* table = (char*)malloc(sizeof(char) * 300 * num);
-    memset(table, 0, 300 * num);
+    char* table = (char*)malloc(sizeof(char) * 200 * (num+1));
+    memset(table, '\0', 200 * (num+1));
+    if(courses == NULL || num==0)
+	{
+		table[1] = 'N';	
+		return table;
+	}
     int i;
     for(i = 0; i< num; i++)
     {
@@ -524,7 +533,7 @@ char* print_table(course** courses, int num)
         strcat(table, instructor);
         strcat(table, "</td>\n");
         /*Column three Enroll*/
-        char enroll[3] = {'\0'};
+        char enroll[5] = {'\0'};
         sprintf(enroll, "%d",courses[i]->enroll);
         strcat(table, "<td>");
         strcat(table, enroll);

@@ -37,8 +37,8 @@ void* send_response(void* p)
     char* request = input->req;
     printf("Get a request: %s\n", request);
     char avg_c[50] = {'\0'};
-    course** tmp_courses;
-    course* m;
+    course** tmp_courses = NULL;
+    course* m = NULL;
     int i, choose=0;
     float avg;
     pthread_mutex_lock(&c_lock);
@@ -55,11 +55,19 @@ void* send_response(void* p)
         for(i=0; i<666; i++)
         {
             res_courses[i] = NULL;
+        }
+        for(i=0; i<total; i++)
+        {
             res_courses[i] = courses[i];
         }
     }
     int tmp_num=res_num;
-    course* src_courses[tmp_num];
+    course** src_courses = (course**)malloc(sizeof(course*)*tmp_num);
+    if(!src_courses)
+        {
+            perror("Error malloc space:");
+            exit(-1);
+        }
     for(i=0; i<tmp_num; i++)
     {
         src_courses[i] = res_courses[i];
@@ -116,8 +124,8 @@ void* send_response(void* p)
     }
     else if(request[0] == 'F')
     {
-        int dir, kind, enroll;
-        float three;
+        int dir = 0, kind = 0, enroll = 0;
+        float three = 0.0;
         if(request[4] == '1')
         {
             sscanf(request,"%*1s_%d_%*d_%d", &dir, &enroll);
@@ -131,7 +139,7 @@ void* send_response(void* p)
     }
     else if(request[0] == 'S')
     {
-        int dir, kind;
+        int dir = 0, kind = 0;
         sscanf(request,"%*1s_%d_%d", &dir, &kind);
         tmp_courses = sort_four(dir, kind, src_courses, tmp_num);
     }
@@ -148,7 +156,7 @@ void* send_response(void* p)
             tmp_courses[i] = NULL;
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         avg = avg_four(kind, src_courses, tmp_num);
         if(kind==1) sprintf(avg_c, "The average of course enroll is %d", (int)avg);
@@ -170,7 +178,7 @@ void* send_response(void* p)
             tmp_courses[i] = NULL;
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         m = max_four(kind, src_courses, tmp_num);
         choose = 2;
@@ -188,7 +196,7 @@ void* send_response(void* p)
             tmp_courses[i] = NULL;
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         m = min_four(kind, src_courses, tmp_num);
         choose = 2;
@@ -199,11 +207,10 @@ void* send_response(void* p)
     // incorporate the html file which is in the same folder
     FILE* header;
     char *reply, *table_html, *line;
-    char cur_line[100] = {'\0'};
     if(choose==0)
     {
-        reply = (char*)malloc(sizeof(char) * 300 * (tmp_num + 160));
-        memset(reply, 0, 300 * (tmp_num + 160));
+        reply = (char*)malloc(sizeof(char) * 200 * (tmp_num + 180));
+        memset(reply, '\0', 200 * (tmp_num + 180));
         header = fopen("template.html", "r");
         /*Generate the table content dynamically*/
         table_html = print_table(tmp_courses, tmp_num);
@@ -211,11 +218,15 @@ void* send_response(void* p)
         while(!feof(header))
         {
             /* Read from html file line by line */
+            char cur_line[100] = {'\0'};
             line = fgets(cur_line, 100, header);
             if (strncmp(line, "<!--add dynamic coutent-->", 26) == 0)
             {
                 strcat(reply, cur_line);
-                strcat(reply,table_html);
+                if(!(strlen(table_html)==1 && table_html[1]=='N'))
+                {
+                    strcat(reply,table_html);
+                }
             }
             else
             {
@@ -225,15 +236,16 @@ void* send_response(void* p)
     }
     else if(choose==1)
     {
-        reply = (char*)malloc(sizeof(char) * 300 * 160);
-        memset(reply, 0, 300 * 160);
+        reply = (char*)malloc(sizeof(char) * 200 * 200);
+        memset(reply, '\0', 200 * 200);
         header = fopen("template.html", "r");
-        table_html = (char*)malloc((sizeof(char) * 50));
-        memset(table_html, 0, 50);
+        table_html = (char*)malloc((sizeof(char) * 100));
+        memset(table_html, '\0', 100);
         strcpy(table_html, avg_c);
         while(!feof(header))
         {
             /* Read from html file line by line */
+            char cur_line[100] = {'\0'};
             line = fgets(cur_line, 100, header);
             if (strncmp(line, "<!--add dynamic coutent-->", 26) == 0)
             {
@@ -250,13 +262,14 @@ void* send_response(void* p)
     }
     else
     {
-        reply = (char*)malloc(sizeof(char) * 300 * 160);
-        memset(reply, 0, 300 * 160);
+        reply = (char*)malloc(sizeof(char) * 200 * 200);
+        memset(reply, '\0', 200 * 200);
         header = fopen("template.html", "r");
         table_html = print_table(&m, 1);
         while(!feof(header))
         {
             /* Read from html file line by line */
+            char cur_line[100] = {'\0'};
             line = fgets(cur_line, 100, header);
             if (strncmp(line, "<!--add dynamic coutent-->", 26) == 0)
             {
@@ -280,6 +293,7 @@ void* send_response(void* p)
     fclose(header);
     free(reply);
     free(table_html);
+    free(src_courses);
     pthread_mutex_lock(&c_lock);
     free(res_courses);
     res_courses = tmp_courses;
@@ -415,14 +429,19 @@ int start_server(int PORT_NUMBER, char* file_name)
         // operation loop start here
         while(initial==1)
         {
+            for(i=0; i<1024; i++)
+            {
+                request[i] = '\0';
+            }
             printf("Accepting next request:\n");
 
             fd = accept(sock, (struct sockaddr *)&client_addr,(socklen_t *)&sin_size);
             bytes_received = recv(fd,request,1024,0);
             request[bytes_received] = '\0';
             printf("This is the incoming request:\n%s\n", request);
-            if(strncmp(request, "GET /favicon.ico", 16)==0)
+            if(strncmp(request, "GET /favicon.ico", 16)==0 || strlen(request)==0)
             {
+                printf("Invalid request ignored\n");
                 continue;
             }
 
@@ -464,7 +483,7 @@ int start_server(int PORT_NUMBER, char* file_name)
                         r = pthread_create(&(thread_array[thread_index]), NULL, &send_response, &(new_input[thread_index]));
                         if(r != 0)
                         {
-                            printf("THREAD CREATION ERROR");
+                            perror("THREAD CREATION ERROR");
                         }
                         thread_check[thread_index] = 1;
                         has_thread[thread_index] = 1;

@@ -27,11 +27,20 @@ void* send_response(void* req)
         }
         for(i=0; i<666; i++)
         {
+            res_courses[i] = NULL;
+        }
+        for(i=0; i<total; i++)
+        {
             res_courses[i] = courses[i];
         }
     }
     int tmp_num=res_num;
-    course* src_courses[tmp_num];
+    course** src_courses = (course**)malloc(sizeof(course*)*tmp_num);
+    if(!src_courses)
+        {
+            perror("Error malloc space:");
+            exit(-1);
+        }
     for(i=0; i<tmp_num; i++)
     {
         src_courses[i] = res_courses[i];
@@ -87,8 +96,8 @@ void* send_response(void* req)
     }
     else if(request[0] == 'F')
     {
-        int dir, kind, enroll;
-        float three;
+        int dir = 0, kind = 0, enroll = 0;
+        float three = 0.0;
         if(request[4] == '1')
         {
             sscanf(request,"%*1s_%d_%*d_%d", &dir, &enroll);
@@ -102,7 +111,7 @@ void* send_response(void* req)
     }
     else if(request[0] == 'S')
     {
-        int dir, kind;
+        int dir = 0, kind = 0;
         sscanf(request,"%*1s_%d_%d", &dir, &kind);
         tmp_courses = sort_four(dir, kind, src_courses, tmp_num);
     }
@@ -118,7 +127,7 @@ void* send_response(void* req)
         {
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         avg = avg_four(kind, src_courses, tmp_num);
         avg_c = (char*)malloc(sizeof(char)*50);
@@ -140,7 +149,7 @@ void* send_response(void* req)
         {
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         m = max_four(kind, src_courses, tmp_num);
         m_c = (char*)malloc(sizeof(char)*180);
@@ -162,7 +171,7 @@ void* send_response(void* req)
         {
             tmp_courses[i] = src_courses[i];
         }
-        int kind;
+        int kind = 0;
         sscanf(request,"%*1s_%d", &kind);
         m = min_four(kind, src_courses, tmp_num);
         m_c = (char*)malloc(sizeof(char)*180);
@@ -198,6 +207,7 @@ void* send_response(void* req)
     }
 
     free_char(response);
+    free(src_courses);
     //pthread_mutex_lock(&c_lock);
     free(res_courses);
     res_courses = tmp_courses;
